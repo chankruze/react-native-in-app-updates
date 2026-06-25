@@ -97,7 +97,7 @@ Checks whether an update is available.
 | `country` | `string` | iOS | ISO 3166-1 country code (e.g. `'us'`, `'in'`) |
 | `curVersion` | `string` | iOS | Current version to compare against |
 
-**Returns `AndroidUpdateInfo` on Android:**
+**<img src="https://developer.android.com/static/images/brand/android-head_flat.png" height="16" alt="Android" /> Returns `AndroidUpdateInfo` on Android:**
 
 | Field | Type | Description |
 |---|---|---|
@@ -109,7 +109,7 @@ Checks whether an update is available.
 | `versionCode` | `number` | Available Play Store version code |
 | `daysSinceRelease` | `number \| null` | Days since update was published |
 
-**Returns `IosUpdateInfo` on iOS:**
+**<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/IOS_logo.svg/1280px-IOS_logo.svg.png?_=20160930140049" height="16" alt="iOS" /> Returns `IosUpdateInfo` on iOS:**
 
 | Field | Type | Description |
 |---|---|---|
@@ -120,7 +120,7 @@ Checks whether an update is available.
 
 ---
 
-### `startUpdate(updateType?)`
+### <img src="https://developer.android.com/static/images/brand/android-head_flat.png" height="18" alt="Android" /> `startUpdate(updateType?)`
 
 *Android only.* Triggers the Play Store update flow.
 
@@ -131,13 +131,13 @@ await startUpdate(UpdateType.IMMEDIATE);  // full-screen blocking update
 
 ---
 
-### `installUpdate()`
+### <img src="https://developer.android.com/static/images/brand/android-head_flat.png" height="18" alt="Android" /> `installUpdate()`
 
 *Android only.* Completes a finished FLEXIBLE download. Call this when `onInAppUpdateStatus` fires with `status === InstallStatus.DOWNLOADED`.
 
 ---
 
-### `addUpdateListener(event, listener)`
+### <img src="https://developer.android.com/static/images/brand/android-head_flat.png" height="18" alt="Android" /> `addUpdateListener(event, listener)`
 
 *Android only.* Subscribes to native update events. Returns an unsubscribe function.
 
@@ -161,7 +161,7 @@ unsubscribe();
 
 ---
 
-### `openAppStore(appId)`
+### <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/IOS_logo.svg/1280px-IOS_logo.svg.png?_=20160930140049" height="18" alt="iOS" /> `openAppStore(appId)`
 
 *iOS only.* Opens the App Store page for the given numeric App Store ID.
 
@@ -199,7 +199,7 @@ enum AvailabilityStatus {
 }
 ```
 
-## Android testing
+## <img src="https://developer.android.com/static/images/brand/android-head_flat.png" height="20" alt="Android" /> Android testing
 
 Play Store In-App Updates require a **real device** with a **release build** installed from the **Play Store** (or Internal Testing track).
 
@@ -208,7 +208,7 @@ Play Store In-App Updates require a **real device** with a **release build** ins
 3. Upload `versionCode = 2` to Internal Testing (no need to publish)
 4. Open the app — `checkForUpdate()` will now return `updateAvailable: true`
 
-## iOS testing
+## <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/IOS_logo.svg/1280px-IOS_logo.svg.png?_=20160930140049" height="20" alt="iOS" /> iOS testing
 
 `checkForUpdate()` hits the live iTunes Search API. To test:
 
