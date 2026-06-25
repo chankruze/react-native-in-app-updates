@@ -121,7 +121,7 @@ class ReactNativeInAppUpdatesModule(reactContext: ReactApplicationContext) :
     emit(EVENT_RESULT, map)
   }
 
-  override fun onNewIntent(intent: Intent?) = Unit
+  override fun onNewIntent(intent: Intent) = Unit
 
   override fun invalidate() {
     appUpdateManager.unregisterListener(installStateListener)
