@@ -1,7 +1,14 @@
 import { TurboModuleRegistry, type TurboModule } from 'react-native';
 
 export interface Spec extends TurboModule {
-  multiply(a: number, b: number): number;
+  checkForUpdate(): Promise<Object>;
+  startUpdate(updateType: number): Promise<void>;
+  installUpdate(): void;
+  // Required by NativeEventEmitter
+  addListener(eventType: string): void;
+  removeListeners(count: number): void;
 }
 
-export default TurboModuleRegistry.getEnforcing<Spec>('ReactNativeInAppUpdates');
+export default TurboModuleRegistry.getEnforcing<Spec>(
+  'ReactNativeInAppUpdates'
+);
