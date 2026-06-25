@@ -49,6 +49,8 @@ export type IosUpdateInfo = {
   storeVersion: string;
   /** ISO 8601 release date of the latest App Store version. */
   releaseDate: string | null;
+  /** Direct App Store URL — pass to Linking.openURL or openAppStore(). */
+  appStoreUrl: string | null;
 };
 
 export type UpdateInfo = AndroidUpdateInfo | IosUpdateInfo;

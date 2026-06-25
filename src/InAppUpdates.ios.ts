@@ -49,6 +49,10 @@ export async function checkForUpdate(
 
   const storeVersion: string = entry.version;
   const releaseDate: string | null = entry.currentVersionReleaseDate ?? null;
+  // Strip tracking query params from the App Store URL
+  const appStoreUrl: string | null = entry.trackViewUrl
+    ? ((entry.trackViewUrl as string).split('?')[0] ?? null)
+    : null;
   const currentVersion = options.curVersion ?? null;
 
   const updateAvailable =
@@ -56,7 +60,7 @@ export async function checkForUpdate(
       ? compareVersions(storeVersion, currentVersion) > 0
       : false;
 
-  return { updateAvailable, storeVersion, releaseDate };
+  return { updateAvailable, storeVersion, releaseDate, appStoreUrl };
 }
 
 export function openAppStore(appId: string): void {
