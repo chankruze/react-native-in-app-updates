@@ -1,12 +1,9 @@
 import { Text, View, StyleSheet } from 'react-native';
-import { multiply } from '@chankruze/react-native-in-app-updates';
-
-const result = multiply(3, 7);
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <Text>In-App Updates — coming soon</Text>
     </View>
   );
 }
