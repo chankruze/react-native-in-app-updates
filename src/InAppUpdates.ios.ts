@@ -66,6 +66,10 @@ export function openAppStore(appId: string): void {
 // Android-only stubs — keep API surface symmetric so callers don't need Platform.OS guards
 export function installUpdate(): void {}
 
+export function startUpdate(_updateType?: number): Promise<void> {
+  return Promise.resolve();
+}
+
 export function addUpdateListener<K extends UpdateEventName>(
   _event: K,
   _listener: (payload: UpdateEventMap[K]) => void
