@@ -38,6 +38,8 @@ npm install @chankruze/react-native-in-app-updates
 
 No native setup needed — iOS is pure TypeScript.
 
+> **No `LSApplicationQueriesSchemes` required.** Unlike libraries that use the `itms-apps://` deep link scheme, this library opens the App Store via a standard `https://apps.apple.com/...` URL. HTTPS URLs do not need to be whitelisted in `Info.plist` or `app.json`.
+
 ### Android
 
 No manual linking needed. The library uses `com.google.android.play:app-update-ktx` which is bundled.
