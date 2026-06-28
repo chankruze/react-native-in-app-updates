@@ -7,6 +7,25 @@ Lightweight in-app updates for Android and iOS.
 - **New Architecture** — TurboModule on Android, pure TypeScript on iOS
 - **Zero extra dependencies** beyond `react-native`
 
+## Compatibility
+
+| Environment                   | Supported |
+| ----------------------------- | --------- |
+| React Native CLI              | ✅        |
+| Expo Bare Workflow            | ✅        |
+| EAS Build + `expo-dev-client` | ✅        |
+| Expo Managed Workflow         | ❌        |
+| Expo Go                       | ❌        |
+
+> **Expo Managed / Expo Go users:** This library requires native module support which is not available in the managed sandbox. Use [`expo-in-app-updates`](https://github.com/SohelIslamImran/expo-in-app-updates) instead.
+
+**Why it won't work in Expo Managed Workflow**
+
+Our library uses the standard React Native TurboModule API (`NativeReactNativeInAppUpdatesSpec`, `TurboModuleRegistry`). Expo Go and Expo Managed Workflow sandbox
+the native layer — custom `TurboModules` can't be registered because there's no access to the native build pipeline. The app would crash on the `TurboModuleRegistry.getEnforcing` call at startup.
+
+Expo has their own native module system (`expo-modules-core`) and their own in-app updates package (`expo-in-app-updates`) built on it. That's the right tool for managed Expo users.
+
 ## Installation
 
 ```sh
@@ -56,22 +75,23 @@ function useInAppUpdates() {
     const run = async () => {
       try {
         if (Platform.OS === 'ios') {
-          const info = await checkForUpdate({
+          const info = (await checkForUpdate({
             bundleId: 'com.example.myapp',
             country: 'us',
-          }) as IosUpdateInfo;
+          })) as IosUpdateInfo;
 
           if (info.updateAvailable && info.appStoreUrl) {
             // Show your own modal, then:
             Linking.openURL(info.appStoreUrl);
           }
         } else {
-          const info = await checkForUpdate({}) as AndroidUpdateInfo;
+          const info = (await checkForUpdate({})) as AndroidUpdateInfo;
           if (info.updateAvailable) {
             // priority >= 4 → force IMMEDIATE, otherwise FLEXIBLE
-            const type = info.updatePriority >= 4
-              ? UpdateType.IMMEDIATE
-              : UpdateType.FLEXIBLE;
+            const type =
+              info.updatePriority >= 4
+                ? UpdateType.IMMEDIATE
+                : UpdateType.FLEXIBLE;
             await startUpdate(type);
           }
         }
@@ -91,60 +111,60 @@ function useInAppUpdates() {
 
 Checks whether an update is available.
 
-| Option | Type | Platform | Description |
-|---|---|---|---|
-| `bundleId` | `string` | iOS (required) | App bundle ID |
-| `country` | `string` | iOS | ISO 3166-1 country code (e.g. `'us'`, `'in'`) |
-| `curVersion` | `string` | iOS | Current version to compare against |
+| Option       | Type     | Platform       | Description                                   |
+| ------------ | -------- | -------------- | --------------------------------------------- |
+| `bundleId`   | `string` | iOS (required) | App bundle ID                                 |
+| `country`    | `string` | iOS            | ISO 3166-1 country code (e.g. `'us'`, `'in'`) |
+| `curVersion` | `string` | iOS            | Current version to compare against            |
 
 **<img src="https://developer.android.com/static/images/brand/android-head_flat.png" height="16" alt="Android" /> Returns `AndroidUpdateInfo` on Android:**
 
-| Field | Type | Description |
-|---|---|---|
-| `updateAvailable` | `boolean` | Whether a newer version exists |
-| `availabilityStatus` | `AvailabilityStatus` | Raw Play Store availability enum |
-| `flexibleAllowed` | `boolean` | FLEXIBLE update is allowed |
-| `immediateAllowed` | `boolean` | IMMEDIATE update is allowed |
-| `updatePriority` | `number` | Server-set priority 0–5 (use `>= 4` for IMMEDIATE) |
-| `versionCode` | `number` | Available Play Store version code |
-| `daysSinceRelease` | `number \| null` | Days since update was published |
+| Field                | Type                 | Description                                        |
+| -------------------- | -------------------- | -------------------------------------------------- |
+| `updateAvailable`    | `boolean`            | Whether a newer version exists                     |
+| `availabilityStatus` | `AvailabilityStatus` | Raw Play Store availability enum                   |
+| `flexibleAllowed`    | `boolean`            | FLEXIBLE update is allowed                         |
+| `immediateAllowed`   | `boolean`            | IMMEDIATE update is allowed                        |
+| `updatePriority`     | `number`             | Server-set priority 0–5 (use `>= 4` for IMMEDIATE) |
+| `versionCode`        | `number`             | Available Play Store version code                  |
+| `daysSinceRelease`   | `number \| null`     | Days since update was published                    |
 
 **<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/IOS_logo.svg/1280px-IOS_logo.svg.png?_=20160930140049" height="16" alt="iOS" /> Returns `IosUpdateInfo` on iOS:**
 
-| Field | Type | Description |
-|---|---|---|
-| `updateAvailable` | `boolean` | Whether a newer version exists |
-| `storeVersion` | `string` | Latest version string (e.g. `"2.1.0"`) |
-| `releaseDate` | `string \| null` | ISO 8601 release date |
-| `appStoreUrl` | `string \| null` | Direct App Store URL for `Linking.openURL` |
+| Field             | Type             | Description                                |
+| ----------------- | ---------------- | ------------------------------------------ |
+| `updateAvailable` | `boolean`        | Whether a newer version exists             |
+| `storeVersion`    | `string`         | Latest version string (e.g. `"2.1.0"`)     |
+| `releaseDate`     | `string \| null` | ISO 8601 release date                      |
+| `appStoreUrl`     | `string \| null` | Direct App Store URL for `Linking.openURL` |
 
 ---
 
 ### <img src="https://developer.android.com/static/images/brand/android-head_flat.png" height="18" alt="Android" /> `startUpdate(updateType?)`
 
-*Android only.* Triggers the Play Store update flow.
+_Android only._ Triggers the Play Store update flow.
 
 ```ts
-await startUpdate(UpdateType.FLEXIBLE);   // download in background
-await startUpdate(UpdateType.IMMEDIATE);  // full-screen blocking update
+await startUpdate(UpdateType.FLEXIBLE); // download in background
+await startUpdate(UpdateType.IMMEDIATE); // full-screen blocking update
 ```
 
 ---
 
 ### <img src="https://developer.android.com/static/images/brand/android-head_flat.png" height="18" alt="Android" /> `installUpdate()`
 
-*Android only.* Completes a finished FLEXIBLE download. Call this when `onInAppUpdateStatus` fires with `status === InstallStatus.DOWNLOADED`.
+_Android only._ Completes a finished FLEXIBLE download. Call this when `onInAppUpdateStatus` fires with `status === InstallStatus.DOWNLOADED`.
 
 ---
 
 ### <img src="https://developer.android.com/static/images/brand/android-head_flat.png" height="18" alt="Android" /> `addUpdateListener(event, listener)`
 
-*Android only.* Subscribes to native update events. Returns an unsubscribe function.
+_Android only._ Subscribes to native update events. Returns an unsubscribe function.
 
 ```ts
 const unsubscribe = addUpdateListener('onInAppUpdateStatus', (event) => {
-  console.log(event.status);               // InstallStatus enum value
-  console.log(event.bytesDownloaded);      // bytes downloaded so far
+  console.log(event.status); // InstallStatus enum value
+  console.log(event.bytesDownloaded); // bytes downloaded so far
   console.log(event.totalBytesToDownload);
 });
 
@@ -154,16 +174,16 @@ unsubscribe();
 
 **Events:**
 
-| Event | Payload | Description |
-|---|---|---|
-| `onInAppUpdateStatus` | `UpdateStatusEvent` | Download progress + install status |
+| Event                 | Payload             | Description                          |
+| --------------------- | ------------------- | ------------------------------------ |
+| `onInAppUpdateStatus` | `UpdateStatusEvent` | Download progress + install status   |
 | `onInAppUpdateResult` | `UpdateResultEvent` | Final result (installed / cancelled) |
 
 ---
 
 ### <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/IOS_logo.svg/1280px-IOS_logo.svg.png?_=20160930140049" height="18" alt="iOS" /> `openAppStore(appId)`
 
-*iOS only.* Opens the App Store page for the given numeric App Store ID.
+_iOS only._ Opens the App Store page for the given numeric App Store ID.
 
 ```ts
 openAppStore('123456789');
@@ -176,8 +196,8 @@ Alternatively, use `Linking.openURL(info.appStoreUrl)` with the URL from `checkF
 
 ```ts
 enum UpdateType {
-  FLEXIBLE = 0,   // background download, user continues using app
-  IMMEDIATE = 1,  // full-screen blocking update
+  FLEXIBLE = 0, // background download, user continues using app
+  IMMEDIATE = 1, // full-screen blocking update
 }
 
 enum InstallStatus {
